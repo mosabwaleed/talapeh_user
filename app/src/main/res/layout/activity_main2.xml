@@ -20,15 +20,20 @@
             android:layout_gravity="center"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"></TextView>
+
         <de.hdodenhof.circleimageview.CircleImageView
-            xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/profile_image"
             android:layout_width="60dp"
             android:layout_height="60dp"
-          android:layout_marginLeft="100dp"
-            android:src="@drawable/ic_launcher_background"
-            app:civ_border_width="2dp"
-            app:civ_border_color="#FF000000"/>
+            android:layout_weight="1"
+            app:civ_border_color="#FF000000"
+            app:civ_border_width="2dp" />
+
+        <ImageView
+            android:id="@+id/cart"
+            android:layout_width="50dp"
+            android:layout_height="57dp"
+            app:srcCompat="@drawable/ic_shopping_cart_black_24dp"/>
 
     </LinearLayout>
     <androidx.recyclerview.widget.RecyclerView

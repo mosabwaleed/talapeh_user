@@ -11,6 +11,7 @@ android {
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
+        vectorDrawables.useSupportLibrary = true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -37,4 +38,5 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'de.hdodenhof:circleimageview:3.1.0'
+    implementation 'com.google.code.gson:gson:2.8.6'
 }

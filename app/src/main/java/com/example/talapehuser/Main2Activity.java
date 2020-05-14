@@ -7,6 +7,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -21,10 +24,12 @@ public class Main2Activity extends AppCompatActivity {
     RecyclerView recyclerView;
     List<itmeList> lists;
     String key,price;
+    ImageView cart;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
+        cart = findViewById(R.id.cart);
         recyclerView =findViewById(R.id.rec);
         recyclerView.setHasFixedSize(true);
         LinearLayoutManager linearLayoutManager =new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false);
@@ -40,9 +45,8 @@ public class Main2Activity extends AppCompatActivity {
                         for (DataSnapshot snapshot:dataSnapshot.getChildren()){
                             key= snapshot.getKey();
                             assert key != null;
-                            price =snapshot.child(key).getValue(String.class);
+                            price =snapshot.getValue(String.class);
                             int i =0;
-                            System.out.println(i);
                             lists.add(new itmeList(key,price,i));
                         }
                         recyclerView.setAdapter(addList);
@@ -53,7 +57,13 @@ public class Main2Activity extends AppCompatActivity {
 
                     }
                 });
-
+        cart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SharedPreference sharedPreference = new SharedPreference();
+                Toast.makeText(Main2Activity.this,sharedPreference.getFavorites(Main2Activity.this).size()+"",Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     @Override
