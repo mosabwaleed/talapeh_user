@@ -61,10 +61,18 @@ public class SharedPreference {
 
         }
     }
-    public int removeFavoritewithname(Context context, String name) {
+
+    public void removeallFavorite(Context context) {
+        ArrayList<HashMap<String,Object>> favorites = getFavorites(context);
+        if (favorites != null) {
+            favorites.clear();
+            saveFavorite(context, favorites);
+        }
+    }
+    public int getFavoritewithname(Context context, String name) {
         ArrayList<HashMap<String,Object>> favorites = getFavorites(context);
         for (int i = 0 ; i<favorites.size();i++){
-            if ((""+favorites.get(i).get("item")).equals(name)){
+            if (favorites.get(i).get("Item").toString().equals(name)){
                 return i;
             }
         }

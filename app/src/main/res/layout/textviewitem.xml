@@ -93,6 +93,25 @@
             android:background="@drawable/ic_remove_black_24dp"
             android:layout_width="50dp"
             android:layout_height="50dp"></ImageView>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/totallin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Total" />
+
+        <TextView
+            android:id="@+id/total"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
     </LinearLayout>
 
 </LinearLayout>

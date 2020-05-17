@@ -3,7 +3,9 @@ package com.example.talapehuser;
 public class itmeList {
     String name;
     String price;
-    int i=0;
+    int i;
+    Double total,totaloftotal;
+    String date;
 
     private itmeList(){}
 
@@ -22,6 +24,27 @@ public class itmeList {
 
     }
 
+    public itmeList(String name, String price, int i, Double total) {
+        this.name = name;
+        this.price = price;
+        this.i = i;
+        this.total = total;
+    }
+
+    public itmeList(String name, String price, int i, Double total, String date) {
+        this.name = name;
+        this.price = price;
+        this.i = i;
+        this.total = total;
+        this.date = date;
+    }
+    public itmeList(String name, int i, String date) {
+        this.name = name;
+        this.i = i;
+        this.date = date;
+    }
+
+
     public String getName() {
         return name;
     }
@@ -38,5 +61,11 @@ public class itmeList {
         this.price = price;
     }
 
+    public Double getTotal() {
+        return total;
+    }
 
+    public String getDate() {
+        return date;
+    }
 }

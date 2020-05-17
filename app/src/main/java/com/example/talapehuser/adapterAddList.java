@@ -9,6 +9,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,12 +41,13 @@ public class adapterAddList extends RecyclerView.Adapter<adapterAddList.ViewHold
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(context).inflate(R.layout.textviewitem,parent,false);
-        context = parent.getContext();
-        return new ViewHolder(v);
+            context = parent.getContext();
+            return new ViewHolder(v);
     }
-
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
+        LinearLayout totallin = holder.totallin;
+        TextView total = holder.total;
         TextView items = holder.items;
         TextView pricetxt = holder.pricetxt;
         final TextView counter = holder.counter;
@@ -55,13 +57,22 @@ public class adapterAddList extends RecyclerView.Adapter<adapterAddList.ViewHold
         items.setText(list.get(position).getName());
         pricetxt.setText(list.get(position).getPrice());
         counter.setText(list.get(position).getI()+"");
+        if (list.get(position).getI()>0){
+            if (list.get(position).getPrice()!=null) {
+                Double total1 = Integer.parseInt(counter.getText().toString()) * Double.parseDouble(pricetxt.getText().toString());
+                total.setText(total1+"");
+            }
+            totallin.setVisibility(View.VISIBLE);
+            add.setVisibility(View.GONE);
+            remove.setVisibility(View.GONE);
+            checkBox.setVisibility(View.GONE);
+        }
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 num =  Integer.parseInt(counter.getText()+"");
                 num +=1;
                 counter.setText(num+"");
-                Toast.makeText(context, num + "", Toast.LENGTH_SHORT).show();
             }
         });
         remove.setOnClickListener(new View.OnClickListener() {
@@ -71,7 +82,6 @@ public class adapterAddList extends RecyclerView.Adapter<adapterAddList.ViewHold
                 if (num>0) {
                     num -= 1;
                     counter.setText(num + "");
-                    Toast.makeText(context, num + "", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -91,13 +101,19 @@ public class adapterAddList extends RecyclerView.Adapter<adapterAddList.ViewHold
                         int cunt = Integer.parseInt(counter.getText()+"");
                         String name =list.get(position).getName();
                         ordar(name,price,cunt);
+                        Main2Activity.order.setVisibility(View.VISIBLE);
+
                     }
                 }
                 else {
                     SharedPreference sharedPreference = new SharedPreference();
-                    int pos = sharedPreference.removeFavoritewithname(context,list.get(position).getName());
+                    int pos = sharedPreference.getFavoritewithname(context,list.get(position).getName());
                     counter.setText("0");
                     System.out.println(pos + "                      mosab");
+                    sharedPreference.removeFavorite(context,pos);
+                    if (sharedPreference.getFavorites(context).size()==0){
+                        Main2Activity.order.setVisibility(View.GONE);
+                    }
                 }
             }
         });
@@ -113,15 +129,19 @@ public class adapterAddList extends RecyclerView.Adapter<adapterAddList.ViewHold
         HashMap<String,Object>hashMap =new HashMap<>();
         String id = FirebaseAuth.getInstance().getCurrentUser().getUid();
         SharedPreference sharedPreference = new SharedPreference();
-        price=price*counter;
+        Double totalprice=price*counter;
         hashMap.put("Item",item);
+        hashMap.put("TotalPrice",totalprice);
         hashMap.put("Price",price);
+        hashMap.put("Counter",(int)counter);
         sharedPreference.addFavorite(context,hashMap);
         }
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView pricetxt;
         TextView items;
         TextView counter;
+        LinearLayout totallin;
+        TextView total;
         ImageView remove;
         Button add ;
         CheckBox checkBox;
@@ -133,6 +153,8 @@ public class adapterAddList extends RecyclerView.Adapter<adapterAddList.ViewHold
             add =item.findViewById(R.id.additem);
             remove=item.findViewById(R.id.remove);
             checkBox =item.findViewById(R.id.box);
+            totallin = item.findViewById(R.id.totallin);
+            total = item.findViewById(R.id.total);
         }
     }
 }
