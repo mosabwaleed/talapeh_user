@@ -48,8 +48,8 @@ public class invoice extends AppCompatActivity {
             uidlist = new ArrayList<>();
             ncdlist = new ArrayList<>();
         }
+        getitem();
         list = new ArrayList<>();
-        getdate();
         new android.os.Handler().postDelayed(new Runnable() {
            @Override
             public void run() {
@@ -60,14 +60,29 @@ public class invoice extends AppCompatActivity {
 
     }
 
-    public void getdate (){
-        firebaseDatabase.getReference("Order").addListenerForSingleValueEvent(new ValueEventListener() {
+    public void getitem (){
+        FirebaseDatabase.getInstance().getReference("Order").child(FirebaseAuth.getInstance().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                    datelist.add(ds.getKey().toString());
+                if (dataSnapshot.exists()){
+                    for (DataSnapshot ds : dataSnapshot.getChildren()) // dates
+                         {
+                             ncdlist.clear();
+                        for (DataSnapshot ds1 : ds.getChildren())//items
+                        {
+                            if (ds1.getKey().equals("ID") || ds1.getKey().equals("date")){ }
+                            else {
+                                ncdlist.add (new itmeList(ds1.getKey() , ds1.getValue(Integer.class) , ds.getKey()));
+                            }
+                        }
+                             ArrayList<itmeList> ncdlist1 = new ArrayList<>();
+                             ncdlist1.addAll(ncdlist);
+                             setprice(ncdlist1);
+                             System.out.println(ncdlist);
+                    }
+
                 }
-                after_date(datelist);
+
             }
 
             @Override
@@ -76,67 +91,24 @@ public class invoice extends AppCompatActivity {
             }
         });
     }
-    public void after_date (final ArrayList<String>datelist){
-        final String[] uid = new String[1];
-        for(int i = 0 ; i<datelist.size();i++) {
+
+    public void setprice (final ArrayList<itmeList> ncdlist){
+        for (int i = 0 ; i<ncdlist.size() ; i++){
             final int finalI = i;
-            firebaseDatabase.getReference("Order").child(datelist.get(i)).addListenerForSingleValueEvent(new ValueEventListener() {
+            FirebaseDatabase.getInstance().getReference("Apps").child("List").addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    for (DataSnapshot ds : dataSnapshot.getChildren()){
-                       uid[0] = ds.getKey();
-                    }
-                    if (uid[0].equals(FirebaseAuth.getInstance().getUid())) {
-                        afteruid(uid[0], datelist.get(finalI));
-                    }
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                }
-            });
-        }
-    }
-
-    public void afteruid (String uid , final String date){
-                firebaseDatabase.getReference("Order").child(date).child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        ncdlist.clear();
-                        for ( DataSnapshot ds : dataSnapshot.getChildren()){
-                            if (ds.getKey().equals("ID") || ds.getKey().equals("date") || ds.getKey().equals("name")){ }
-                            else {
-                                ncdlist.add(new itmeList(ds.getKey() , Integer.parseInt(ds.getValue(String.class)) , date));
-                            }
-                        }
-                        getprice(ncdlist);
-                    }
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                    }
-                });
-    }
-    public void getprice (final ArrayList<itmeList>ncdlist){
-        for (int i = 0 ; i<ncdlist.size() ; i++) {
-            final int finalI = i;
-            firebaseDatabase.getReference("Apps").child("List").child(ncdlist.get(i).getName()).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        ncdlist.get(finalI).setPrice(dataSnapshot.getValue(String.class));
-                        if (ncdlist.get(finalI).getPrice() == null){
-                            ncdlist.get(finalI).setPrice(dataSnapshot.getValue(String.class));
-                        }
-                        System.out.println(ncdlist.get(finalI).getName() + " price " + ncdlist.get(finalI).getPrice());
+                    ncdlist.get(finalI).setPrice(dataSnapshot.child(ncdlist.get(finalI).getName()).getValue(String.class));
+                    System.out.println(dataSnapshot.child(ncdlist.get(finalI).getName()).getKey() +"          "  +dataSnapshot.child(ncdlist.get(finalI).getName()).getValue(String.class));
                 }
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
-                    System.out.println(databaseError.getMessage());
                 }
             });
         }
-        ArrayList <itmeList> ncdlist2 = new ArrayList<>();
-        ncdlist2.addAll(ncdlist);
-        list.add(ncdlist2);
+        ArrayList<itmeList> ncdlist1 = new ArrayList<>();
+        ncdlist1.addAll(ncdlist);
+        list.add(ncdlist1);
+        System.out.println(list);
     }
 }

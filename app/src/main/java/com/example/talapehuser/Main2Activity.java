@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 public class Main2Activity extends AppCompatActivity {
     adapterAddList addList;
@@ -105,16 +106,17 @@ public class Main2Activity extends AppCompatActivity {
                     public void onClick(View v) {
                         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
                         Date date = new Date();
-                       DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Order").child("19-05-2020")
-                                .child(FirebaseAuth.getInstance().getUid());
+                       DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Order").child(FirebaseAuth.getInstance().getUid())
+                                .child(formatter.format(date));
                        for (int i = 0 ; i<listdialog.size() ; i++){
-                           databaseReference.child(listdialog.get(i).getName()).setValue(listdialog.get(i).getI()+"");
+                           databaseReference.child(listdialog.get(i).getName()).setValue(listdialog.get(i).getI());
                        }
                        databaseReference.child("ID").setValue(FirebaseAuth.getInstance().getUid());
-                       databaseReference.child("date").setValue("19-05-2020");
+                       databaseReference.child("date").setValue(formatter.format(date));
                        addList.notifyDataSetChanged();
                        order.setVisibility(View.GONE);
                        dialog.dismiss();
+                       sharedPreference.removeallFavorite(Main2Activity.this);
 
                     }
                 });

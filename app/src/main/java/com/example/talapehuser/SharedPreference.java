@@ -46,7 +46,7 @@ public class SharedPreference {
 
     public void removeFavorite(Context context, int index) {
         ArrayList<HashMap<String,Object>> favorites = getFavorites(context);
-        if (favorites != null) {
+        if (favorites != null && favorites.size()>0) {
             //favorites = new ArrayList<>();
             favorites.remove(index);
             saveFavorite(context, favorites);
