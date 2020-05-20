@@ -110,6 +110,24 @@ public class Main2Activity extends AppCompatActivity {
                                 .child(formatter.format(date));
                        for (int i = 0 ; i<listdialog.size() ; i++){
                            databaseReference.child(listdialog.get(i).getName()).setValue(listdialog.get(i).getI());
+                           final int finalI = i;
+                           FirebaseDatabase.getInstance().getReference("jard").child(listdialog.get(i).getName()).addListenerForSingleValueEvent(new ValueEventListener() {
+                               @Override
+                               public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                   if (dataSnapshot.exists()){
+                                       int newi = dataSnapshot.getValue(Integer.class) + 1;
+                                       FirebaseDatabase.getInstance().getReference("jard").child(listdialog.get(finalI).getName()).setValue(newi);
+                                   }
+                                   else {
+                                       FirebaseDatabase.getInstance().getReference("jard").child(listdialog.get(finalI).getName()).setValue(listdialog.get(finalI).getI());
+                                   }
+                               }
+
+                               @Override
+                               public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                               }
+                           });
                        }
                        databaseReference.child("ID").setValue(FirebaseAuth.getInstance().getUid());
                        databaseReference.child("date").setValue(formatter.format(date));
@@ -117,6 +135,8 @@ public class Main2Activity extends AppCompatActivity {
                        order.setVisibility(View.GONE);
                        dialog.dismiss();
                        sharedPreference.removeallFavorite(Main2Activity.this);
+
+
 
                     }
                 });
