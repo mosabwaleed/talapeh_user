@@ -31,11 +31,10 @@ public class itmeList {
         this.total = total;
     }
 
-    public itmeList(String name, String price, int i, Double total, String date) {
+    public itmeList(String name, String price, int i, String date) {
         this.name = name;
         this.price = price;
         this.i = i;
-        this.total = total;
         this.date = date;
     }
     public itmeList(String name, int i, String date) {

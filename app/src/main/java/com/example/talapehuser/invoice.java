@@ -72,13 +72,13 @@ public class invoice extends AppCompatActivity {
                         {
                             if (ds1.getKey().equals("ID") || ds1.getKey().equals("date")){ }
                             else {
-                                ncdlist.add (new itmeList(ds1.getKey() , ds1.getValue(Integer.class) , ds.getKey()));
+                                ncdlist.add (new itmeList(ds1.getKey() ,ds1.child("price").getValue(String.class), ds1.child("count").getValue(Integer.class) , ds.getKey()));
                             }
                         }
                              ArrayList<itmeList> ncdlist1 = new ArrayList<>();
                              ncdlist1.addAll(ncdlist);
-                             setprice(ncdlist1);
-                             System.out.println(ncdlist);
+                             list.add(ncdlist1);
+                             System.out.println(list);
                     }
 
                 }
@@ -90,25 +90,5 @@ public class invoice extends AppCompatActivity {
 
             }
         });
-    }
-
-    public void setprice (final ArrayList<itmeList> ncdlist){
-        for (int i = 0 ; i<ncdlist.size() ; i++){
-            final int finalI = i;
-            FirebaseDatabase.getInstance().getReference("Apps").child("List").addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    ncdlist.get(finalI).setPrice(dataSnapshot.child(ncdlist.get(finalI).getName()).getValue(String.class));
-                    System.out.println(dataSnapshot.child(ncdlist.get(finalI).getName()).getKey() +"          "  +dataSnapshot.child(ncdlist.get(finalI).getName()).getValue(String.class));
-                }
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                }
-            });
-        }
-        ArrayList<itmeList> ncdlist1 = new ArrayList<>();
-        ncdlist1.addAll(ncdlist);
-        list.add(ncdlist1);
-        System.out.println(list);
     }
 }

@@ -48,7 +48,9 @@ public class invoice_adapter extends RecyclerView.Adapter<invoice_adapter.ViewHo
         itemlistrec.setLayoutManager(linearLayoutManager);
         itemlistrec.setItemAnimator(new DefaultItemAnimator());
         addList = new adapterAddList(context,list.get(position));
-        date.setText(list.get(position).get(0).getDate());
+        if (list.get(position).size()>0) {
+            date.setText(list.get(position).get(0).getDate());
+        }
         itemlistrec.setAdapter(addList);
         for (int i = 0 ; i<list.get(position).size();i++){
             if (list.get(position).get(i).getPrice() != null){

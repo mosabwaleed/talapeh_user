@@ -109,17 +109,21 @@ public class Main2Activity extends AppCompatActivity {
                        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Order").child(FirebaseAuth.getInstance().getUid())
                                 .child(formatter.format(date));
                        for (int i = 0 ; i<listdialog.size() ; i++){
-                           databaseReference.child(listdialog.get(i).getName()).setValue(listdialog.get(i).getI());
+                           databaseReference.child(listdialog.get(i).getName()).child("count").setValue(listdialog.get(i).getI());
+                           databaseReference.child(listdialog.get(i).getName()).child("price").setValue(listdialog.get(i).getPrice());
                            final int finalI = i;
-                           FirebaseDatabase.getInstance().getReference("jard").child(listdialog.get(i).getName()).addListenerForSingleValueEvent(new ValueEventListener() {
+                           FirebaseDatabase.getInstance().getReference("jard").child(formatter.format(date)).child(listdialog.get(i).getName()).child("count").addListenerForSingleValueEvent(new ValueEventListener() {
                                @Override
                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                   SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+                                   Date date = new Date();
                                    if (dataSnapshot.exists()){
                                        int newi = dataSnapshot.getValue(Integer.class) + 1;
-                                       FirebaseDatabase.getInstance().getReference("jard").child(listdialog.get(finalI).getName()).setValue(newi);
+                                       FirebaseDatabase.getInstance().getReference("jard").child(formatter.format(date)).child(listdialog.get(finalI).getName()).child("count").setValue(newi);
                                    }
                                    else {
-                                       FirebaseDatabase.getInstance().getReference("jard").child(listdialog.get(finalI).getName()).setValue(listdialog.get(finalI).getI());
+                                       FirebaseDatabase.getInstance().getReference("jard").child(formatter.format(date)).child(listdialog.get(finalI).getName()).child("count").setValue(listdialog.get(finalI).getI());
+                                       FirebaseDatabase.getInstance().getReference("jard").child(formatter.format(date)).child(listdialog.get(finalI).getName()).child("price").setValue(listdialog.get(finalI).getPrice());
                                    }
                                }
 
