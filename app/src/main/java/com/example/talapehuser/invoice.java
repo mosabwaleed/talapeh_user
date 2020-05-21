@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -33,10 +34,15 @@ public class invoice extends AppCompatActivity {
     FirebaseDatabase firebaseDatabase;
     static ArrayList<String> datelist , uidlist;
     static ArrayList<itmeList> ncdlist;
+    private ProgressDialog progressDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_invoice);
+        progressDialog = new ProgressDialog(invoice.this);
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.setMessage("Please Wait");
         invoicerec = findViewById(R.id.invoicrec);
         firebaseDatabase = FirebaseDatabase.getInstance();
         invoicerec.setHasFixedSize(true);
@@ -47,20 +53,13 @@ public class invoice extends AppCompatActivity {
             datelist = new ArrayList<>();
             uidlist = new ArrayList<>();
             ncdlist = new ArrayList<>();
+            list = new ArrayList<>();
         }
         getitem();
-        list = new ArrayList<>();
-        new android.os.Handler().postDelayed(new Runnable() {
-           @Override
-            public void run() {
-                invoice_adapter = new invoice_adapter(invoice.this,list);
-                invoicerec.setAdapter(invoice_adapter);
-            }
-        },2000);
-
     }
 
     public void getitem (){
+        progressDialog.show();
         FirebaseDatabase.getInstance().getReference("Order").child(FirebaseAuth.getInstance().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -78,10 +77,13 @@ public class invoice extends AppCompatActivity {
                              ArrayList<itmeList> ncdlist1 = new ArrayList<>();
                              ncdlist1.addAll(ncdlist);
                              list.add(ncdlist1);
+                             invoice_adapter = new invoice_adapter(invoice.this,list);
+                             invoicerec.setAdapter(invoice_adapter);
                              System.out.println(list);
                     }
 
                 }
+                progressDialog.dismiss();
 
             }
 

@@ -75,6 +75,16 @@ public class adapterAddList extends RecyclerView.Adapter<adapterAddList.ViewHold
                 num = Integer.parseInt(counter.getText() + "");
                 num += 1;
                 counter.setText(num + "");
+                if (checkBox.isChecked()){
+                    SharedPreference sharedPreference = new SharedPreference();
+                    int pos = sharedPreference.getFavoritewithname(context, list.get(position).getName());
+                    sharedPreference.removeFavorite(context, pos);
+                    String p = list.get(position).getPrice();
+                    Double price = Double.parseDouble(p);
+                    int cunt = Integer.parseInt(counter.getText() + "");
+                    String name = list.get(position).getName();
+                    ordar(name, price, cunt);
+                }
             }
         });
         remove.setOnClickListener(new View.OnClickListener() {

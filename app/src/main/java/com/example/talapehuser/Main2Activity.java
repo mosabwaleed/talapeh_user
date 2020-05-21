@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -40,10 +41,15 @@ public class Main2Activity extends AppCompatActivity {
     SharedPreference sharedPreference;
     public static ImageView cart;
     public static Button order;
+    private ProgressDialog progressDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
+        progressDialog = new ProgressDialog(Main2Activity.this);
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.setMessage("Please Wait");
         sharedPreference = new SharedPreference();
         sharedPreference.removeallFavorite(Main2Activity.this);
         cart = findViewById(R.id.cart);
@@ -88,7 +94,7 @@ public class Main2Activity extends AppCompatActivity {
                 listdialog.clear();
                 final Dialog dialog = new Dialog(Main2Activity.this);
                 dialog.setContentView(R.layout.orderdialog);
-                RecyclerView orderrec = dialog.findViewById(R.id.orderrec);
+                final RecyclerView orderrec = dialog.findViewById(R.id.orderrec);
                 final Button ordernow = dialog.findViewById(R.id.ordernow);
                 Button cancle = dialog.findViewById(R.id.cancle);
                 orderrec.setHasFixedSize(true);
@@ -148,6 +154,7 @@ public class Main2Activity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         dialog.dismiss();
+                        orderrec.setAdapter(new adapterAddList(Main2Activity.this,listdialog));
                     }
                 });
                 dialog.show();
