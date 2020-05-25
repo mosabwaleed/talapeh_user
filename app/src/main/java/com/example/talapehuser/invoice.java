@@ -71,7 +71,7 @@ public class invoice extends AppCompatActivity {
                         {
                             if (ds1.getKey().equals("ID") || ds1.getKey().equals("date")){ }
                             else {
-                                ncdlist.add (new itmeList(ds1.getKey() ,ds1.child("price").getValue(String.class), ds1.child("count").getValue(Integer.class) , ds.getKey()));
+                                ncdlist.add (new itmeList(ds1.getKey() ,ds1.child("price").getValue(String.class), ds1.child("count").getValue(Double.class) , ds.getKey()));
                             }
                         }
                              ArrayList<itmeList> ncdlist1 = new ArrayList<>();

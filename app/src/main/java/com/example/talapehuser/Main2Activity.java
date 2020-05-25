@@ -71,7 +71,7 @@ public class Main2Activity extends AppCompatActivity {
                             key= snapshot.getKey();
                             assert key != null;
                             price =snapshot.getValue(String.class);
-                            int i =0;
+                            Double i =0.0;
                             lists.add(new itmeList(key,price,i));
                         }
                         recyclerView.setAdapter(addList);
@@ -104,7 +104,7 @@ public class Main2Activity extends AppCompatActivity {
                 ArrayList<HashMap<String,Object>> arrayList = sharedPreference.getFavorites(Main2Activity.this);
                 for (int i = 0 ; i<arrayList.size();i++){
                     HashMap<String,Object> map = arrayList.get(i);
-                    listdialog.add(new itmeList(map.get("Item")+"",map.get("Price")+"",(int)Math.round((Double) map.get("Counter")),Double.parseDouble(map.get("TotalPrice")+"")));
+                    listdialog.add(new itmeList(map.get("Item")+"",map.get("Price")+"",  Double.parseDouble(map.get("Counter")+"") ,Double.parseDouble(map.get("TotalPrice")+"")));
                 }
                 orderrec.setAdapter(new adapterAddList(Main2Activity.this,listdialog));
                 ordernow.setOnClickListener(new View.OnClickListener() {

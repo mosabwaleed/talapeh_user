@@ -31,7 +31,7 @@ public class adapterAddList extends RecyclerView.Adapter<adapterAddList.ViewHold
     Context context;
     List<itmeList> list;
     int position;
-    static int num;
+    static Double num;
     boolean aBoolean;
 
     public adapterAddList(Context context, List<itmeList> itmeLists) {
@@ -61,7 +61,7 @@ public class adapterAddList extends RecyclerView.Adapter<adapterAddList.ViewHold
         counter.setText(list.get(position).getI() + "");
         if (list.get(position).getI() > 0) {
             if (list.get(position).getPrice() != null) {
-                Double total1 = Integer.parseInt(counter.getText().toString()) * Double.parseDouble(pricetxt.getText().toString());
+                Double total1 = Double.parseDouble(counter.getText().toString()) * Double.parseDouble(pricetxt.getText().toString());
                 total.setText(total1 + "");
             }
             totallin.setVisibility(View.VISIBLE);
@@ -72,8 +72,8 @@ public class adapterAddList extends RecyclerView.Adapter<adapterAddList.ViewHold
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                num = Integer.parseInt(counter.getText() + "");
-                num += 1;
+                num = Double.parseDouble(counter.getText() + "");
+                num += 0.5;
                 counter.setText(num + "");
                 if (checkBox.isChecked()){
                     SharedPreference sharedPreference = new SharedPreference();
@@ -81,7 +81,7 @@ public class adapterAddList extends RecyclerView.Adapter<adapterAddList.ViewHold
                     sharedPreference.removeFavorite(context, pos);
                     String p = list.get(position).getPrice();
                     Double price = Double.parseDouble(p);
-                    int cunt = Integer.parseInt(counter.getText() + "");
+                    Double cunt = Double.parseDouble(counter.getText() + "");
                     String name = list.get(position).getName();
                     ordar(name, price, cunt);
                 }
@@ -90,9 +90,9 @@ public class adapterAddList extends RecyclerView.Adapter<adapterAddList.ViewHold
         remove.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                num = Integer.parseInt(counter.getText() + "");
+                num = Double.parseDouble(counter.getText() + "");
                 if (num > 0) {
-                    num -= 1;
+                    num -= 0.5;
                     counter.setText(num + "");
                 }
             }
@@ -102,24 +102,26 @@ public class adapterAddList extends RecyclerView.Adapter<adapterAddList.ViewHold
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    int num2 = Integer.parseInt(counter.getText() + "");
+                    Double num2 = Double.parseDouble(counter.getText() + "");
                     if (num2 == 0) {
                         Toast.makeText(context, "قم بأختيار عدد الكراتين اولا", Toast.LENGTH_SHORT).show();
                         checkBox.toggle();
                     } else {
                         String p = list.get(position).getPrice();
-                        Double price = Double.parseDouble(p);
-                        int cunt = Integer.parseInt(counter.getText() + "");
+                        Double price = 0.0;
+                        try {
+                             price = Double.parseDouble(p);
+                        }
+                        catch (Exception ignored){ }
+                        Double cunt = Double.parseDouble(counter.getText() + "");
                         String name = list.get(position).getName();
                         ordar(name, price, cunt);
                         Main2Activity.order.setVisibility(View.VISIBLE);
-
                     }
                 } else {
                     SharedPreference sharedPreference = new SharedPreference();
                     int pos = sharedPreference.getFavoritewithname(context, list.get(position).getName());
                     counter.setText("0");
-                    System.out.println(pos + "                      mosab");
                     sharedPreference.removeFavorite(context, pos);
                     if (sharedPreference.getFavorites(context).size() == 0) {
                         Main2Activity.order.setVisibility(View.GONE);
@@ -127,7 +129,6 @@ public class adapterAddList extends RecyclerView.Adapter<adapterAddList.ViewHold
                 }
             }
         });
-
         this.position = position;
     }
 
@@ -136,7 +137,7 @@ public class adapterAddList extends RecyclerView.Adapter<adapterAddList.ViewHold
         return list.size();
     }
 
-    public void ordar(String item, Double price, int counter) {
+    public void ordar(String item, Double price, Double counter) {
         HashMap<String, Object> hashMap = new HashMap<>();
         String id = FirebaseAuth.getInstance().getCurrentUser().getUid();
         SharedPreference sharedPreference = new SharedPreference();
@@ -144,7 +145,7 @@ public class adapterAddList extends RecyclerView.Adapter<adapterAddList.ViewHold
         hashMap.put("Item", item);
         hashMap.put("TotalPrice", totalprice);
         hashMap.put("Price", price);
-        hashMap.put("Counter", (int) counter);
+        hashMap.put("Counter", (Double) counter);
         sharedPreference.addFavorite(context, hashMap);
     }
 
