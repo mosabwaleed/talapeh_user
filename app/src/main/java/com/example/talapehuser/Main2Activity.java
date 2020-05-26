@@ -130,6 +130,9 @@ public class Main2Activity extends AppCompatActivity {
                                    else {
                                        FirebaseDatabase.getInstance().getReference("jard").child(formatter.format(date)).child(listdialog.get(finalI).getName()).child("count").setValue(listdialog.get(finalI).getI());
                                        FirebaseDatabase.getInstance().getReference("jard").child(formatter.format(date)).child(listdialog.get(finalI).getName()).child("price").setValue(listdialog.get(finalI).getPrice());
+                                       if (listdialog.get(finalI).getPrice().equals("0.0")){
+                                           FirebaseDatabase.getInstance().getReference("jard").child(formatter.format(date)).child(listdialog.get(finalI).getName()).child("dynamicprice").setValue("dynamicprice");
+                                       }
                                    }
                                }
 

@@ -24,6 +24,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -33,6 +35,9 @@ public class adapterAddList extends RecyclerView.Adapter<adapterAddList.ViewHold
     int position;
     static Double num;
     boolean aBoolean;
+    SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+    Date date = new Date();
+    String date1;
 
     public adapterAddList(Context context, List<itmeList> itmeLists) {
         this.context = context;
@@ -49,9 +54,9 @@ public class adapterAddList extends RecyclerView.Adapter<adapterAddList.ViewHold
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
         LinearLayout totallin = holder.totallin;
-        TextView total = holder.total;
+        final TextView total = holder.total;
         TextView items = holder.items;
-        TextView pricetxt = holder.pricetxt;
+        final TextView pricetxt = holder.pricetxt;
         final TextView counter = holder.counter;
         Button add = holder.add;
         final CheckBox checkBox = holder.checkBox;
@@ -61,8 +66,29 @@ public class adapterAddList extends RecyclerView.Adapter<adapterAddList.ViewHold
         counter.setText(list.get(position).getI() + "");
         if (list.get(position).getI() > 0) {
             if (list.get(position).getPrice() != null) {
-                Double total1 = Double.parseDouble(counter.getText().toString()) * Double.parseDouble(pricetxt.getText().toString());
-                total.setText(total1 + "");
+                if (list.get(position).getDate() != null ){date1 = list.get(position).getDate();}
+                else {date1 = formatter.format(date);}
+                FirebaseDatabase.getInstance().getReference("jard")
+                        .child(date1)
+                        .child(list.get(position).getName())
+                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.hasChild("dynamicprice")){
+                            total.setText(list.get(position).getPrice());
+                        }
+                        else {
+                            Double total1 = Double.parseDouble(counter.getText().toString()) * Double.parseDouble(pricetxt.getText().toString());
+                            total.setText(total1 + "");
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
             }
             totallin.setVisibility(View.VISIBLE);
             add.setVisibility(View.GONE);
