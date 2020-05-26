@@ -118,13 +118,14 @@ public class Main2Activity extends AppCompatActivity {
                            databaseReference.child(listdialog.get(i).getName()).child("count").setValue(listdialog.get(i).getI());
                            databaseReference.child(listdialog.get(i).getName()).child("price").setValue(listdialog.get(i).getPrice());
                            final int finalI = i;
+                           final int finalI1 = i;
                            FirebaseDatabase.getInstance().getReference("jard").child(formatter.format(date)).child(listdialog.get(i).getName()).child("count").addListenerForSingleValueEvent(new ValueEventListener() {
                                @Override
                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                    SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
                                    Date date = new Date();
                                    if (dataSnapshot.exists()){
-                                       int newi = dataSnapshot.getValue(Integer.class) + 1;
+                                       Double newi = dataSnapshot.getValue(Integer.class) + listdialog.get(finalI1).getI();
                                        FirebaseDatabase.getInstance().getReference("jard").child(formatter.format(date)).child(listdialog.get(finalI).getName()).child("count").setValue(newi);
                                    }
                                    else {
