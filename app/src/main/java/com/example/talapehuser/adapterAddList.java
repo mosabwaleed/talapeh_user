@@ -46,7 +46,7 @@ public class adapterAddList extends RecyclerView.Adapter<adapterAddList.ViewHold
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent,  int viewType) {
         View v = LayoutInflater.from(context).inflate(R.layout.textviewitem, parent, false);
         context = parent.getContext();
         return new ViewHolder(v);
@@ -54,10 +54,11 @@ public class adapterAddList extends RecyclerView.Adapter<adapterAddList.ViewHold
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
+        final TextView counter = holder.counter;
         holder.items.setText(list.get(position).getName());
         holder.pricetxt.setText(list.get(position).getPrice());
-        holder.counter.setText(list.get(position).getI() + "");
         if (list.get(position).getI() > 0) {
+            counter.setText(list.get(position).getI()+"");
             if (list.get(position).getPrice() != null) {
                 if (list.get(position).getDate() != null ){date1 = list.get(position).getDate();}
                 else {date1 = formatter.format(date);}
@@ -68,10 +69,11 @@ public class adapterAddList extends RecyclerView.Adapter<adapterAddList.ViewHold
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if (dataSnapshot.hasChild("dynamicprice")){
+
                             holder.total.setText(list.get(position).getPrice());
                         }
                         else {
-                            Double total1 = Double.parseDouble(holder.counter.getText().toString()) * Double.parseDouble(holder.pricetxt.getText().toString());
+                            Double total1 = Double.parseDouble(counter.getText().toString()) * Double.parseDouble(holder.pricetxt.getText().toString());
                             holder.total.setText(total1 + "");
                         }
                     }
@@ -91,16 +93,19 @@ public class adapterAddList extends RecyclerView.Adapter<adapterAddList.ViewHold
         holder.add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                num = Double.parseDouble(holder.counter.getText() + "");
+                num = Double.parseDouble(counter.getText() + "");
                 num += 0.5;
-                holder.counter.setText(num + "");
+                counter.setText(num + "");
                 if (holder.checkBox.isChecked()){
                     SharedPreference sharedPreference = new SharedPreference();
                     int pos = sharedPreference.getFavoritewithname(context, list.get(position).getName());
                     sharedPreference.removeFavorite(context, pos);
                     String p = list.get(position).getPrice();
-                    Double price = Double.parseDouble(p);
-                    Double cunt = Double.parseDouble(holder.counter.getText() + "");
+                    Double price = 0.0;
+                    try {
+                        price = Double.parseDouble(p);
+                    } catch (Exception ignored) { }
+                    Double cunt = Double.parseDouble(counter.getText() + "");
                     String name = list.get(position).getName();
                     ordar(name, price, cunt);
                 }
@@ -109,10 +114,10 @@ public class adapterAddList extends RecyclerView.Adapter<adapterAddList.ViewHold
         holder.remove.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                num = Double.parseDouble(holder.counter.getText() + "");
+                num = Double.parseDouble(counter.getText() + "");
                 if (num > 0) {
                     num -= 0.5;
-                    holder.counter.setText(num + "");
+                    counter.setText(num + "");
                 }
             }
         });
@@ -120,31 +125,33 @@ public class adapterAddList extends RecyclerView.Adapter<adapterAddList.ViewHold
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    Double num2 = Double.parseDouble(holder.counter.getText() + "");
+                    Double num2 = Double.parseDouble(counter.getText() + "");
                     if (num2 == 0) {
                         Toast.makeText(context, "قم بأختيار عدد الكراتين اولا", Toast.LENGTH_SHORT).show();
                         holder.checkBox.toggle();
                     } else {
-                        String p = list.get(position).getPrice();
-                        Double price = 0.0;
-                        try {
-                             price = Double.parseDouble(p);
-                        }
-                        catch (Exception ignored){ }
-                        Double cunt = Double.parseDouble(holder.counter.getText() + "");
-                        String name = list.get(position).getName();
-                        ordar(name, price, cunt);
-                        Main2Activity.order.setVisibility(View.VISIBLE);
+                            String p = list.get(position).getPrice();
+                            Double price = 0.0;
+                            try {
+                                price = Double.parseDouble(p);
+                            } catch (Exception ignored) {
+                            }
+                            Double cunt = Double.parseDouble(counter.getText() + "");
+                            String name = list.get(position).getName();
+                            ordar(name, price, cunt);
+                            Main2Activity.order.setVisibility(View.VISIBLE);
+
                     }
                 } else {
                     SharedPreference sharedPreference = new SharedPreference();
                     int pos = sharedPreference.getFavoritewithname(context, list.get(position).getName());
-                    holder.counter.setText("0");
+                    counter.setText("0");
                     sharedPreference.removeFavorite(context, pos);
                     if (sharedPreference.getFavorites(context).size() == 0) {
                         Main2Activity.order.setVisibility(View.GONE);
                     }
                 }
+
             }
         });
     }
@@ -159,10 +166,10 @@ public class adapterAddList extends RecyclerView.Adapter<adapterAddList.ViewHold
         return position;
     }
 
-    @Override
-    public long getItemId(int position) {
-        return position;
-    }
+    //@Override
+    //public long getItemId(int position) {
+        //return position;
+    //}
 
     public void ordar(String item, Double price, Double counter) {
         HashMap<String, Object> hashMap = new HashMap<>();
@@ -196,6 +203,7 @@ public class adapterAddList extends RecyclerView.Adapter<adapterAddList.ViewHold
             checkBox = item.findViewById(R.id.box);
             totallin = item.findViewById(R.id.totallin);
             total = item.findViewById(R.id.total);
+            counter.setText("0.0");
         }
     }
 }

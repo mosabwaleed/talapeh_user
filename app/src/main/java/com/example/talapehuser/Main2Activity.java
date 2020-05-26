@@ -106,12 +106,13 @@ public class Main2Activity extends AppCompatActivity {
                     HashMap<String,Object> map = arrayList.get(i);
                     listdialog.add(new itmeList(map.get("Item")+"",map.get("Price")+"",  Double.parseDouble(map.get("Counter")+"") ,Double.parseDouble(map.get("TotalPrice")+"")));
                 }
-                orderrec.setAdapter(new adapterAddList(Main2Activity.this,listdialog));
+                adapterAddList adapterAddList = new adapterAddList(Main2Activity.this,listdialog);
+                orderrec.setAdapter(adapterAddList);
                 ordernow.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
-                        Date date = new Date();
+                        final SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+                        final Date date = new Date();
                        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Order").child(FirebaseAuth.getInstance().getUid())
                                 .child(formatter.format(date));
                        for (int i = 0 ; i<listdialog.size() ; i++){
@@ -123,11 +124,11 @@ public class Main2Activity extends AppCompatActivity {
                                        Double newcount = dataSnapshot.child("count").getValue(Double.class);
                                        newcount += listdialog.get(finalI).getI();
                                        FirebaseDatabase.getInstance().getReference("Order").child(FirebaseAuth.getInstance().getUid())
-                                               .child(listdialog.get(finalI).getName()).child("count").setValue(newcount);
+                                               .child(formatter.format(date)).child(listdialog.get(finalI).getName()).child("count").setValue(newcount);
                                    }
                                    else {
                                        FirebaseDatabase.getInstance().getReference("Order").child(FirebaseAuth.getInstance().getUid())
-                                               .child(listdialog.get(finalI).getName()).child("count").setValue(listdialog.get(finalI).getI());
+                                               .child(formatter.format(date)).child(listdialog.get(finalI).getName()).child("count").setValue(listdialog.get(finalI).getI());
                                    }
                                }
 
@@ -165,11 +166,10 @@ public class Main2Activity extends AppCompatActivity {
                        databaseReference.child("ID").setValue(FirebaseAuth.getInstance().getUid());
                        databaseReference.child("date").setValue(formatter.format(date));
                        addList.notifyDataSetChanged();
+                       recyclerView.setAdapter(addList);
                        order.setVisibility(View.GONE);
                        dialog.dismiss();
                        sharedPreference.removeallFavorite(Main2Activity.this);
-
-
 
                     }
                 });
