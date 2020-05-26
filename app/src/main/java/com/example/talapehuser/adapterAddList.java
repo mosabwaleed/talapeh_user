@@ -39,6 +39,7 @@ public class adapterAddList extends RecyclerView.Adapter<adapterAddList.ViewHold
     Date date = new Date();
     String date1;
 
+
     public adapterAddList(Context context, List<itmeList> itmeLists) {
         this.context = context;
         this.list = itmeLists;
@@ -52,18 +53,10 @@ public class adapterAddList extends RecyclerView.Adapter<adapterAddList.ViewHold
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
-        LinearLayout totallin = holder.totallin;
-        final TextView total = holder.total;
-        TextView items = holder.items;
-        final TextView pricetxt = holder.pricetxt;
-        final TextView counter = holder.counter;
-        Button add = holder.add;
-        final CheckBox checkBox = holder.checkBox;
-        ImageView remove = holder.remove;
-        items.setText(list.get(position).getName());
-        pricetxt.setText(list.get(position).getPrice());
-        counter.setText(list.get(position).getI() + "");
+    public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
+        holder.items.setText(list.get(position).getName());
+        holder.pricetxt.setText(list.get(position).getPrice());
+        holder.counter.setText(list.get(position).getI() + "");
         if (list.get(position).getI() > 0) {
             if (list.get(position).getPrice() != null) {
                 if (list.get(position).getDate() != null ){date1 = list.get(position).getDate();}
@@ -75,11 +68,11 @@ public class adapterAddList extends RecyclerView.Adapter<adapterAddList.ViewHold
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if (dataSnapshot.hasChild("dynamicprice")){
-                            total.setText(list.get(position).getPrice());
+                            holder.total.setText(list.get(position).getPrice());
                         }
                         else {
-                            Double total1 = Double.parseDouble(counter.getText().toString()) * Double.parseDouble(pricetxt.getText().toString());
-                            total.setText(total1 + "");
+                            Double total1 = Double.parseDouble(holder.counter.getText().toString()) * Double.parseDouble(holder.pricetxt.getText().toString());
+                            holder.total.setText(total1 + "");
                         }
                     }
 
@@ -90,48 +83,47 @@ public class adapterAddList extends RecyclerView.Adapter<adapterAddList.ViewHold
                 });
 
             }
-            totallin.setVisibility(View.VISIBLE);
-            add.setVisibility(View.GONE);
-            remove.setVisibility(View.GONE);
-            checkBox.setVisibility(View.GONE);
+            holder.totallin.setVisibility(View.VISIBLE);
+            holder.add.setVisibility(View.GONE);
+            holder.remove.setVisibility(View.GONE);
+            holder.checkBox.setVisibility(View.GONE);
         }
-        add.setOnClickListener(new View.OnClickListener() {
+        holder.add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                num = Double.parseDouble(counter.getText() + "");
+                num = Double.parseDouble(holder.counter.getText() + "");
                 num += 0.5;
-                counter.setText(num + "");
-                if (checkBox.isChecked()){
+                holder.counter.setText(num + "");
+                if (holder.checkBox.isChecked()){
                     SharedPreference sharedPreference = new SharedPreference();
                     int pos = sharedPreference.getFavoritewithname(context, list.get(position).getName());
                     sharedPreference.removeFavorite(context, pos);
                     String p = list.get(position).getPrice();
                     Double price = Double.parseDouble(p);
-                    Double cunt = Double.parseDouble(counter.getText() + "");
+                    Double cunt = Double.parseDouble(holder.counter.getText() + "");
                     String name = list.get(position).getName();
                     ordar(name, price, cunt);
                 }
             }
         });
-        remove.setOnClickListener(new View.OnClickListener() {
+        holder.remove.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                num = Double.parseDouble(counter.getText() + "");
+                num = Double.parseDouble(holder.counter.getText() + "");
                 if (num > 0) {
                     num -= 0.5;
-                    counter.setText(num + "");
+                    holder.counter.setText(num + "");
                 }
             }
         });
-        checkBox.setChecked(aBoolean);
-        checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    Double num2 = Double.parseDouble(counter.getText() + "");
+                    Double num2 = Double.parseDouble(holder.counter.getText() + "");
                     if (num2 == 0) {
                         Toast.makeText(context, "قم بأختيار عدد الكراتين اولا", Toast.LENGTH_SHORT).show();
-                        checkBox.toggle();
+                        holder.checkBox.toggle();
                     } else {
                         String p = list.get(position).getPrice();
                         Double price = 0.0;
@@ -139,7 +131,7 @@ public class adapterAddList extends RecyclerView.Adapter<adapterAddList.ViewHold
                              price = Double.parseDouble(p);
                         }
                         catch (Exception ignored){ }
-                        Double cunt = Double.parseDouble(counter.getText() + "");
+                        Double cunt = Double.parseDouble(holder.counter.getText() + "");
                         String name = list.get(position).getName();
                         ordar(name, price, cunt);
                         Main2Activity.order.setVisibility(View.VISIBLE);
@@ -147,7 +139,7 @@ public class adapterAddList extends RecyclerView.Adapter<adapterAddList.ViewHold
                 } else {
                     SharedPreference sharedPreference = new SharedPreference();
                     int pos = sharedPreference.getFavoritewithname(context, list.get(position).getName());
-                    counter.setText("0");
+                    holder.counter.setText("0");
                     sharedPreference.removeFavorite(context, pos);
                     if (sharedPreference.getFavorites(context).size() == 0) {
                         Main2Activity.order.setVisibility(View.GONE);
@@ -155,12 +147,21 @@ public class adapterAddList extends RecyclerView.Adapter<adapterAddList.ViewHold
                 }
             }
         });
-        this.position = position;
     }
 
     @Override
     public int getItemCount() {
         return list.size();
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return position;
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
     }
 
     public void ordar(String item, Double price, Double counter) {

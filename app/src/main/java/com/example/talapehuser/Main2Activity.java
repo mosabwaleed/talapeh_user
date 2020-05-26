@@ -115,17 +115,36 @@ public class Main2Activity extends AppCompatActivity {
                        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Order").child(FirebaseAuth.getInstance().getUid())
                                 .child(formatter.format(date));
                        for (int i = 0 ; i<listdialog.size() ; i++){
-                           databaseReference.child(listdialog.get(i).getName()).child("count").setValue(listdialog.get(i).getI());
-                           databaseReference.child(listdialog.get(i).getName()).child("price").setValue(listdialog.get(i).getPrice());
                            final int finalI = i;
-                           final int finalI1 = i;
+                           databaseReference.child(listdialog.get(i).getName()).addListenerForSingleValueEvent(new ValueEventListener() {
+                               @Override
+                               public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                   if (dataSnapshot.hasChild("count")){
+                                       Double newcount = dataSnapshot.child("count").getValue(Double.class);
+                                       newcount += listdialog.get(finalI).getI();
+                                       FirebaseDatabase.getInstance().getReference("Order").child(FirebaseAuth.getInstance().getUid())
+                                               .child(listdialog.get(finalI).getName()).child("count").setValue(newcount);
+                                   }
+                                   else {
+                                       FirebaseDatabase.getInstance().getReference("Order").child(FirebaseAuth.getInstance().getUid())
+                                               .child(listdialog.get(finalI).getName()).child("count").setValue(listdialog.get(finalI).getI());
+                                   }
+                               }
+
+                               @Override
+                               public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                               }
+                           });
+                           databaseReference.child(listdialog.get(i).getName()).child("price").setValue(listdialog.get(i).getPrice());
+
                            FirebaseDatabase.getInstance().getReference("jard").child(formatter.format(date)).child(listdialog.get(i).getName()).child("count").addListenerForSingleValueEvent(new ValueEventListener() {
                                @Override
                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                    SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
                                    Date date = new Date();
                                    if (dataSnapshot.exists()){
-                                       Double newi = dataSnapshot.getValue(Integer.class) + listdialog.get(finalI1).getI();
+                                       Double newi = dataSnapshot.getValue(Integer.class) + listdialog.get(finalI).getI();
                                        FirebaseDatabase.getInstance().getReference("jard").child(formatter.format(date)).child(listdialog.get(finalI).getName()).child("count").setValue(newi);
                                    }
                                    else {
