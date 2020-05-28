@@ -118,6 +118,19 @@ public class adapterAddList extends RecyclerView.Adapter<adapterAddList.ViewHold
                 if (num > 0) {
                     num -= 0.5;
                     counter.setText(num + "");
+                    if (holder.checkBox.isChecked()){
+                        SharedPreference sharedPreference = new SharedPreference();
+                        int pos = sharedPreference.getFavoritewithname(context, list.get(position).getName());
+                        sharedPreference.removeFavorite(context, pos);
+                        String p = list.get(position).getPrice();
+                        Double price = 0.0;
+                        try {
+                            price = Double.parseDouble(p);
+                        } catch (Exception ignored) { }
+                        Double cunt = Double.parseDouble(counter.getText() + "");
+                        String name = list.get(position).getName();
+                        ordar(name, price, cunt);
+                    }
                 }
             }
         });
