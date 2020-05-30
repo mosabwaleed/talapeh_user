@@ -170,6 +170,8 @@ public class Main2Activity extends AppCompatActivity {
                        order.setVisibility(View.GONE);
                        dialog.dismiss();
                        sharedPreference.removeallFavorite(Main2Activity.this);
+                       FirebaseDatabase.getInstance().getReference("ordernotifi").child("orderauth")
+                               .setValue(FirebaseAuth.getInstance().getUid()+new Date() +"");
 
                     }
                 });
